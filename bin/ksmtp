@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+KSMTP - Simple Python SMTP relay replacement for sendmail with SSL authentication
+"""
+
 import smtplib
 import email.mime.text
 import optparse
@@ -37,6 +41,8 @@ def parse_config(conf):
         parser = ConfigParser.ConfigParser()
         parser.read(CONF_FILE)
         if parser.has_section(CONF_SECTION):
+            if parser.has_option(CONF_SECTION, 'disabled'):
+                conf["disabled"] = parser.get(CONF_SECTION, 'disabled')
             if parser.has_option(CONF_SECTION, 'to'):
                 conf["to"] = parser.get(CONF_SECTION, 'to')
             if parser.has_option(CONF_SECTION, 'from'):
@@ -147,6 +153,9 @@ def validate_conf(conf, parser):
 def run():
     global conf
     conf = parse_config(conf)
+    if "disabled" in conf and conf["disabled"] == "true":
+    	print "Error: see /etc/ksmtp.conf configuration file!"
+    	sys.exit(1)
     conf, parser = parse_command_line(conf)
     validate_conf(conf, parser)
     
@@ -167,8 +176,9 @@ def run():
             print "-"
     else:
         sys.stdout.write("Subject: ")
-        if not conf["subject"]:
-            subject = sys.stdin.readline()
+        #if not conf["subject"]:
+        #    subject = sys.stdin.readline()
+        subject = sys.stdin.readline()
         print "Body: (use '.' to end)"
         while True:
             line = sys.stdin.readline()

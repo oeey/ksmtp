@@ -2,12 +2,12 @@ from distutils.core import setup
 
 setup(
     name='ksmtp',
-    version='0.2.1',
+    version='0.2.2',
     author='Kenneth Burgener',
-    author_email='kenneth@k.ttak.org',
+    author_email='kenneth@oeey.com',
     scripts=['bin/ksmtp'],
     packages=['ksmtp'],
-    package_data={'ksmtp': ['conf/*.conf']},
+    data_files=[('/etc/', ['config/ksmtp.conf'])],
     url='http://pypi.python.org/pypi/ksmtp/',
     license='LICENSE.txt',
     description='Simple Python SMTP relay replacement for sendmail with SSL authentication',
