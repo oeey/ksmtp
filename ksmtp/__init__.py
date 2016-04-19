@@ -17,5 +17,8 @@ Usage:
   4) send test mail
      ksmtp test@test.com -s "some subject"
 
+PyPI - https://pypi.python.org/pypi/ksmtp
+GitHub - https://github.com/oeey/ksmtp
+
 """
 
