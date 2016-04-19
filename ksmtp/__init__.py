@@ -36,6 +36,43 @@ Usage
              secure="ssl",
              debug=True)
 
+Sample Config
+=============
+
+/etc/ksmtp.conf:
+
+  [ksmtp]
+
+  ## from email address
+  from = username@gmail.com
+
+  ## user
+  user = username@gmail.com
+
+  ## password
+  pass = password
+
+  ## server
+  server = smtp.gmail.com
+
+  ## port
+  port = 465
+  #port = 587
+
+  ## secure
+  secure = ssl
+  #secure = tls
+
+
+  ## default to email address (if none specified)
+  #to = user@domain.com
+
+  ## default catch-all (always CC)
+  #catch-all = user@domain.com
+
+  ## default subject
+  #subject = default test subject
+
 Issues
 ======
 
@@ -59,12 +96,12 @@ CONF_FILE = '/etc/ksmtp.conf'
 CONF_SECTION = 'ksmtp'
 
 
-def print_dict(conf):
+def _print_dict(conf):
     for key in conf:
         print key, '=', conf[key]
 
 
-def parse_config(conf):
+def _parse_config(conf):
     if os.path.exists(CONF_FILE):
         parser = ConfigParser.ConfigParser()
         parser.read(CONF_FILE)
@@ -92,11 +129,7 @@ def parse_config(conf):
     return conf
 
 
-def get_username():
-    return pwd.getpwuid(os.getuid())[0]
-
-
-def validate_conf(conf):
+def _validate_conf(conf):
     failure = None
 
     # validate to
@@ -129,6 +162,8 @@ def validate_conf(conf):
 def send(to=None, subject=None, body=None,
          sender=None, user=None, password=None, server=None, port=None, secure=None, debug=None):
     """
+    Example:
+
       send(to="user@domain",
          sender="user@domain",
          subject="subject",
@@ -154,7 +189,7 @@ def send(to=None, subject=None, body=None,
     conf["subject"] = ''            # '' - default subject
     conf["debug"] = False         # debug output
 
-    conf = parse_config(conf)
+    conf = _parse_config(conf)
     if "disabled" in conf and conf["disabled"] == "true":
         raise Exception("Error: see /etc/ksmtp.conf configuration file!")
     if to:
@@ -175,12 +210,12 @@ def send(to=None, subject=None, body=None,
         conf["secure"] = secure
     if debug:
         conf["debug"] = debug
-    validate_conf(conf)
+    _validate_conf(conf)
 
     debug = conf["debug"]
     if debug:
         print "Configuration:"
-        print_dict(conf)
+        _print_dict(conf)
         print "-"
 
     msg = email.mime.text.MIMEText(body)
