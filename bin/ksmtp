@@ -1,7 +1,43 @@
 #!/usr/bin/env python
 
 """
-KSMTP - Simple Python SMTP relay replacement for sendmail with SSL authentication
+
+ksmtp - Simple Python SMTP relay replacement for sendmail with SSL authentication
+
+
+ksmtp
+=====
+
+Simple Python SMTP relay replacement for sendmail with SSL authentication
+
+Useful for relaying all email through an account like Gmail, without the
+messy configurations of Postfix / Sendmail.
+
+Source
+======
+
+PyPI - https://pypi.python.org/pypi/ksmtp
+GitHub - https://github.com/oeey/ksmtp
+
+Usage
+=====
+
+  1) pip install ksmtp
+  2) edit /etc/ksmtp.conf with your login credentials
+  3) (optional) create symlink to ksmtp to replace sendmail
+     ln -s `which ksmtp` /usr/sbin/sendmail
+  4) send test mail
+     ksmtp test@test.com -s "some subject"
+
+Issues
+======
+
+Gmail:
+If you get an "smtplib.SMTPAuthenticationError" and your credentials are
+correct, you may need to "allow less secure apps access" to your account.
+
+See https://support.google.com/accounts/answer/6010255
+
 """
 
 import smtplib
@@ -65,7 +101,7 @@ def parse_config(conf):
 
 
 def get_username():
-    return pwd.getpwuid( os.getuid() )[ 0 ]
+    return pwd.getpwuid(os.getuid())[0]
 
 
 def parse_command_line(conf):
@@ -120,16 +156,16 @@ def parse_command_line(conf):
 
 def validate_conf(conf, parser):
     failure = None
-    
+
     # validate to
+    # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["to"]):
     if not conf["to"]:
-    #if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["to"]):
         failure = "Missing or invalid 'to' address"
 
-    #if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["from"]):
+    # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["from"]):
     #    failure = "Missing or invalid 'from' address"
 
-    #if conf["catch-all"] and not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["catch-all"]):
+    # if conf["catch-all"] and not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["catch-all"]):
     #    failure = "Invalid 'catch-all' address"
 
     if conf["port"]:
@@ -154,13 +190,13 @@ def run():
     global conf
     conf = parse_config(conf)
     if "disabled" in conf and conf["disabled"] == "true":
-    	print "Error: see /etc/ksmtp.conf configuration file!"
-    	sys.exit(1)
+        print "Error: see /etc/ksmtp.conf configuration file!"
+        sys.exit(1)
     conf, parser = parse_command_line(conf)
     validate_conf(conf, parser)
-    
+
     verbose = conf["verbose"]
-    
+
     if verbose:
         print "Configuration:"
         print_dict(conf)
@@ -176,8 +212,8 @@ def run():
             print "-"
     else:
         sys.stdout.write("Subject: ")
-        #if not conf["subject"]:
-        #    subject = sys.stdin.readline()
+        # if not conf["subject"]:
+        #     subject = sys.stdin.readline()
         subject = sys.stdin.readline()
         print "Body: (use '.' to end)"
         while True:
@@ -187,14 +223,14 @@ def run():
             msg_text += line
 
     msg = email.mime.text.MIMEText(msg_text)
-    
+
     if conf["subject"]:
         msg['Subject'] = conf["subject"]
     if conf["from"]:
         msg['From'] = conf["from"]
     if conf["to"]:
         msg['To'] = conf["to"]
-        #msg['To'] = ", ".join(to_emails)
+        # msg['To'] = ", ".join(to_emails)
 
     if conf["secure"] == "ssl":
         if verbose:
@@ -225,7 +261,7 @@ def run():
         s.sendmail(conf["from"], [conf["to"]], msg.as_string())
     if verbose:
         print "Message Sent."
-    
+
     if verbose:
         print "Quitting ..."
     s.quit()

@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='ksmtp',
-    version='0.2.2',
+    version='0.2.3',
     author='Kenneth Burgener',
     author_email='kenneth@oeey.com',
     scripts=['bin/ksmtp'],
