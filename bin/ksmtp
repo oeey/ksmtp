@@ -161,6 +161,8 @@ def validate_conf(conf, parser):
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["to"]):
     if not conf["to"]:
         failure = "Missing or invalid 'to' address"
+    if "@" not in conf["to"]:
+        conf["to"] = conf["to"] + "@localhost"
 
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["from"]):
     #    failure = "Missing or invalid 'from' address"
@@ -209,28 +211,32 @@ def run():
             print "Subject: %s" % conf["subject"]
             print "Body:"
             print msg_text
-            print "-"
+            print "."
+            print "EOT"
     else:
         sys.stdout.write("Subject: ")
         # if not conf["subject"]:
         #     subject = sys.stdin.readline()
         subject = sys.stdin.readline()
+        if subject:
+            conf["subject"] = subject.strip()
         print "Body: (use '.' to end)"
         while True:
             line = sys.stdin.readline()
             if line.strip() == ".":
                 break
             msg_text += line
+        print "EOT"
 
     msg = email.mime.text.MIMEText(msg_text)
 
     if conf["subject"]:
-        msg['Subject'] = conf["subject"]
+        msg["Subject"] = conf["subject"]
     if conf["from"]:
-        msg['From'] = conf["from"]
+        msg["From"] = conf["from"]
     if conf["to"]:
-        msg['To'] = conf["to"]
-        # msg['To'] = ", ".join(to_emails)
+        msg["To"] = conf["to"]
+        # msg["To"] = ", ".join(to_emails)
 
     if conf["secure"] == "ssl":
         if verbose:

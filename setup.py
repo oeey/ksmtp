@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='ksmtp',
-    version='0.2.7',
+    version='0.2.8',
     author='Kenneth Burgener',
     author_email='kenneth@oeey.com',
     scripts=['bin/ksmtp'],

@@ -87,7 +87,6 @@ See https://support.google.com/accounts/answer/6010255
 import smtplib
 import email.mime.text
 import os
-import pwd
 import ConfigParser
 # import re
 
@@ -136,6 +135,8 @@ def _validate_conf(conf):
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["to"]):
     if not conf["to"]:
         failure = "Missing or invalid 'to' address"
+    if "@" not in conf["to"]:
+        conf["to"] = conf["to"] + "@localhost"
 
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["from"]):
     #    failure = "Missing or invalid 'from' address"
