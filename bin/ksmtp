@@ -161,7 +161,7 @@ def validate_conf(conf, parser):
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["to"]):
     if not conf["to"]:
         failure = "Missing or invalid 'to' address"
-    if "@" not in conf["to"]:
+    elif "@" not in conf["to"]:
         conf["to"] = conf["to"] + "@localhost"
 
     # if not re.match('[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.[a-zA-Z0-9.-_]+', conf["from"]):
