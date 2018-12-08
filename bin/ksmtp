@@ -214,11 +214,9 @@ def run():
             print "."
             print "EOT"
     else:
-        sys.stdout.write("Subject: ")
-        # if not conf["subject"]:
-        #     subject = sys.stdin.readline()
-        subject = sys.stdin.readline()
-        if subject:
+        if not conf["subject"]:
+            sys.stdout.write("Subject: ")
+            conf["subject"] = sys.stdin.readline()
             conf["subject"] = subject.strip()
         print "Body: (use '.' to end)"
         while True:
@@ -264,8 +262,9 @@ def run():
     else:
         if verbose:
             print "Sending message to %s ..." % conf["to"]
-        s.sendmail(conf["from"], [conf["to"]], msg.as_string())
+        rc = s.sendmail(conf["from"], [conf["to"]], msg.as_string())
     if verbose:
+        print rc  # does not return anything, just exception
         print "Message Sent."
 
     if verbose:
