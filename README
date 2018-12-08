@@ -27,16 +27,17 @@ Usage
 
   3. (optional) create symlink to ksmtp to replace sendmail
 
-    ```
     ln -s `which ksmtp` /usr/sbin/sendmail
-    ```
 
   4. send test mail
 
-    ```
     ksmtp test@test.com
     ksmtp test@test.com -s "some subject"
-    ```
+
+Command Line Usage
+==================
+
+  echo "Message Body" | ksmtp -s "subject" -t "to@test.com" -f "from@test.com" -S mailrelay.com --verbose
 
 Code Usage
 ==========
